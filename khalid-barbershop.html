@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KHALID Barber-Shop</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--brand:#E24B4A;--brand-dark:#A32D2D;--brand-light:#FCEBEB;--gold:#BA7517;--gold-light:#FAEEDA;--bg:#f5f5f5;--bg2:#fff;--bg3:#f0f0f0;--text:#1a1a1a;--text2:#666;--border:#e0e0e0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
+.app{width:100%;max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg)}
+.nav{background:#1a1a1a;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;height:52px;border-bottom:2px solid var(--brand);position:sticky;top:0;z-index:50}
+.nav-logo{color:#fff;font-size:16px;font-weight:600;display:flex;align-items:center;gap:6px}
+.nav-logo span{color:var(--brand)}
+.nav-links{display:flex;gap:2px}
+.nav-link{background:none;border:none;color:#aaa;font-size:11px;padding:5px 8px;border-radius:6px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:3px;transition:all .15s}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-link.active{color:var(--brand);background:rgba(226,75,74,.12)}
+.nav-right{display:flex;align-items:center;gap:6px}
+.nav-user{color:#888;font-size:11px}
+.notif-bell{background:none;border:none;color:#aaa;cursor:pointer;font-size:20px;position:relative;padding:4px}
+.notif-bell:hover{color:#fff}
+.notif-badge{position:absolute;top:0;right:0;background:var(--brand);color:#fff;font-size:9px;font-weight:600;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.btn-logout{background:none;border:1px solid #444;color:#aaa;font-size:11px;padding:3px 8px;border-radius:5px;cursor:pointer;font-family:inherit}
+.btn-logout:hover{border-color:var(--brand);color:var(--brand)}
+.page{display:none}.page.active{display:block}
+.notif-panel{position:fixed;top:52px;right:calc(50% - 240px);width:280px;background:#fff;border:1px solid var(--border);border-radius:12px;z-index:100;display:none;max-height:360px;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.notif-panel.open{display:block}
+.notif-header{padding:.75rem 1rem;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.notif-item{padding:.625rem 1rem;border-bottom:1px solid var(--border)}
+.notif-item.unread{border-left:3px solid var(--brand)}
+.notif-title{font-size:12px;font-weight:600}
+.notif-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.notif-time{font-size:10px;color:var(--text2);margin-top:2px}
+.mark-read{font-size:11px;color:var(--brand);cursor:pointer;background:none;border:none;font-family:inherit}
+.login-wrap{display:flex;align-items:center;justify-content:center;padding:2rem 1rem;min-height:100vh;background:var(--bg)}
+.login-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:2rem;width:100%;max-width:340px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.login-title{font-size:22px;font-weight:700;margin-bottom:.2rem;display:flex;align-items:center;gap:8px}
+.login-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem}
+.role-tabs{display:flex;gap:6px;margin-bottom:1.25rem}
+.role-tab{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center;cursor:pointer;font-size:12px;color:var(--text2);transition:all .15s;font-family:inherit}
+.role-tab.active{background:var(--brand-light);border-color:var(--brand);color:var(--brand-dark);font-weight:600}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:block;font-weight:500}
+.form-input,.form-select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;color:var(--text);font-family:inherit;margin-bottom:1rem;outline:none;transition:border .15s}
+.form-input:focus,.form-select:focus{border-color:var(--brand)}
+.btn-full{width:100%;background:var(--brand);color:#fff;border:none;padding:11px;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:600;transition:background .15s}
+.btn-full:hover{background:var(--brand-dark)}
+.btn-full:disabled{opacity:.6;cursor:not-allowed}
+.login-hint{margin-top:1rem;padding:.75rem;background:var(--bg3);border-radius:8px;font-size:11px;color:var(--text2);line-height:1.8}
+.err-msg{color:var(--brand-dark);font-size:12px;margin-top:-.5rem;margin-bottom:.75rem;display:none;font-weight:500}
+.err-msg.show{display:block}
+.hero{background:#1a1a1a;padding:3rem 1.5rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'✂';position:absolute;font-size:200px;opacity:.03;top:-30px;right:-20px}
+.hero-badge{display:inline-block;background:var(--brand);color:#fff;font-size:10px;padding:3px 14px;border-radius:20px;margin-bottom:.875rem;letter-spacing:3px;font-weight:600}
+.hero h1{color:#fff;font-size:30px;font-weight:700;margin-bottom:.5rem}
+.hero h1 span{color:var(--brand)}
+.hero p{color:#888;font-size:13px;margin-bottom:1.5rem}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-p{background:var(--brand);color:#fff;border:none;padding:10px 22px;border-radius:10px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600;display:flex;align-items:center;gap:6px;transition:background .15s}
+.btn-p:hover{background:var(--brand-dark)}
+.btn-o{background:none;color:#fff;border:1px solid #555;padding:10px 22px;border-radius:10px;font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-o:hover{border-color:var(--brand);color:var(--brand)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);background:#111;border-top:1px solid #333}
+.stat-item{padding:.875rem;text-align:center;border-right:1px solid #333}
+.stat-item:last-child{border-right:none}
+.stat-num{color:var(--brand);font-size:20px;font-weight:700}
+.stat-label{color:#666;font-size:10px;margin-top:2px}
+.section{padding:1.25rem 1.125rem .75rem}
+.section-title{font-size:15px;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.menu-cat-title{font-size:12px;font-weight:700;color:var(--gold);background:var(--gold-light);padding:5px 10px;border-radius:6px;margin-bottom:8px;display:inline-block}
+.service-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:all .15s}
+.service-row:hover{border-color:var(--brand);transform:translateY(-1px)}
+.service-row.selected{border-color:var(--brand);background:var(--brand-light)}
+.srv-left{display:flex;align-items:center;gap:10px}
+.srv-icon{font-size:18px}
+.srv-name{font-size:13px;font-weight:600}
+.srv-sub{font-size:11px;color:var(--text2)}
+.srv-price{font-size:14px;font-weight:700;color:var(--brand)}
+.rdv-summary{background:var(--gold-light);border:1px solid var(--gold);border-radius:8px;padding:.75rem 1rem;margin:0 1.125rem .75rem;font-size:13px;display:none;font-weight:500}
+.rdv-summary.show{display:block}
+.rdv-form{background:#fff;border:1px solid var(--border);border-radius:16px;padding:1.25rem;margin:0 1.125rem 1.25rem}
+.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:6px}
+.day-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 2px;text-align:center;cursor:pointer;font-size:10px;color:var(--text2);transition:all .15s}
+.day-btn:hover:not(.disabled){border-color:var(--brand);color:var(--brand)}
+.day-btn.selected{background:var(--brand);border-color:var(--brand);color:#fff}
+.day-btn.disabled{opacity:.3;cursor:not-allowed}
+.day-num{font-size:14px;font-weight:700;display:block;margin-top:2px;color:inherit}
+.slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+.slot-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;font-size:11px;color:var(--text2);transition:all .15s;font-weight:500}
+.slot-btn:hover:not(.taken){border-color:var(--brand);color:var(--brand)}
+.slot-btn.selected{background:var(--brand);border-color:var(--brand);color:#fff}
+.slot-btn.taken{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+.whatsapp-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:#25D366;color:#fff;border:none;padding:11px;border-radius:10px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600;margin-top:10px;text-decoration:none}
+.gallery-filter{display:flex;gap:6px;padding:0 1.125rem .875rem;flex-wrap:wrap}
+.filter-btn{background:#fff;border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s;font-weight:500}
+.filter-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 1.125rem 1.125rem}
+.gallery-item{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .15s;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.gallery-item:hover{transform:scale(1.02)}
+.gallery-img{width:100%;height:140px;object-fit:cover;display:block;background:var(--bg3)}
+.gallery-img-ph{width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:42px;background:var(--bg3)}
+.gallery-info{padding:8px 10px}
+.gallery-title{font-size:13px;font-weight:600}
+.gallery-tag{font-size:11px;color:var(--text2);margin-top:2px}
+.admin-tabs{display:flex;gap:6px;padding:0 1.125rem .875rem;flex-wrap:wrap}
+.admin-tab{background:#fff;border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s;font-weight:500}
+.admin-tab.active{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
+.admin-panel{display:none}.admin-panel.active{display:block}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 1.125rem 1.125rem}
+.admin-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1rem 1.125rem;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.admin-card.full{grid-column:span 2}
+.admin-card-title{font-size:11px;color:var(--text2);margin-bottom:.75rem;display:flex;align-items:center;gap:4px;font-weight:500}
+.metric-val{font-size:22px;font-weight:700}
+.metric-sub{font-size:10px;color:var(--text2);margin-top:2px}
+.rdv-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.rdv-item:last-child{border-bottom:none}
+.rdv-client{font-size:13px;font-weight:600}
+.rdv-detail{font-size:11px;color:var(--text2);margin-top:1px}
+.rdv-time{font-size:12px;color:var(--brand);font-weight:700}
+.rev-bar{margin-bottom:8px}
+.rev-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:3px}
+.rev-track{background:var(--bg3);border-radius:4px;height:8px;overflow:hidden}
+.rev-fill{height:100%;background:var(--brand);border-radius:4px;transition:width .6s ease}
+.barber-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.barber-item:last-child{border-bottom:none}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
+.barber-planning{padding:0 1.125rem 1.125rem}
+.planning-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1rem 1.125rem;margin-bottom:10px}
+.planning-title{font-size:13px;font-weight:700;margin-bottom:.75rem;display:flex;align-items:center;gap:6px}
+.rdv-full-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.rdv-full-item:last-child{border-bottom:none}
+.rdv-time-badge{background:var(--brand-light);color:var(--brand-dark);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;min-width:44px;text-align:center}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:.875rem 1.25rem;border-radius:12px;font-size:13px;display:none;align-items:center;gap:8px;z-index:999;border-left:4px solid var(--brand);max-width:320px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.toast.show{display:flex}
+.loading{text-align:center;padding:2rem;color:var(--text2);font-size:13px}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<div class="toast" id="toast"><i class="ti ti-bell"></i><span id="toast-text"></span></div>
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">Notifications <button class="mark-read" onclick="markAllRead()">Tout lu</button></div>
+  <div id="notif-list"></div>
+</div>
+
+<!-- LOGIN -->
+<div id="page-login" class="page active">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-title"><i class="ti ti-cut" style="color:var(--brand)"></i> KHALID <span style="color:var(--brand)">Barber</span></div>
+      <div class="login-sub">Connectez-vous pour continuer</div>
+      <div class="role-tabs">
+        <div class="role-tab active" onclick="setRole('client',this)"><i class="ti ti-user"></i> Client</div>
+        <div class="role-tab" onclick="setRole('barber',this)"><i class="ti ti-cut"></i> Barbier</div>
+        <div class="role-tab" onclick="setRole('admin',this)"><i class="ti ti-shield"></i> Admin</div>
+      </div>
+      <label class="form-label" id="login-label">Prénom</label>
+      <input class="form-input" id="login-input" placeholder="Votre prénom" onkeydown="if(event.key==='Enter')doLogin()" />
+      <div id="pw-row" style="display:none">
+        <label class="form-label">Mot de passe</label>
+        <input class="form-input" id="login-pw" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <div class="err-msg" id="login-err"></div>
+      <button class="btn-full" id="login-btn" onclick="doLogin()">Connexion <i class="ti ti-arrow-right"></i></button>
+      <div class="login-hint">
+        <b>Client :</b> n'importe quel prénom<br>
+        <b>Barbier :</b> Khalid / Youssef / Hamza / Amine + mdp <b>1234</b><br>
+        <b>Admin :</b> admin + mdp <b>admin123</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="page-main" class="page">
+  <nav class="nav">
+    <div class="nav-logo"><i class="ti ti-cut"></i> KHALID <span>Barber</span></div>
+    <div class="nav-links" id="nav-links"></div>
+    <div class="nav-right">
+      <button class="notif-bell" id="notif-btn" onclick="toggleNotifPanel()">
+        <i class="ti ti-bell"></i>
+        <span class="notif-badge" id="notif-count" style="display:none">0</span>
+      </button>
+      <span class="nav-user" id="nav-username"></span>
+      <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+  </nav>
+
+  <div id="tab-home" class="page">
+    <div class="hero">
+      <div class="hero-badge">SINCE 2015 · AGADIR</div>
+      <h1>KHALID <span>Barber-Shop</span></h1>
+      <p>Style, précision & savoir-faire — le meilleur look pour chaque homme</p>
+      <div class="hero-btns">
+        <button class="btn-p" onclick="showTab('rdv')"><i class="ti ti-calendar-plus"></i> Prendre RDV</button>
+        <button class="btn-o" onclick="showTab('gallery')"><i class="ti ti-photo"></i> Nos styles</button>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-num" id="stat-rdv">—</div><div class="stat-label">RDV total</div></div>
+      <div class="stat-item"><div class="stat-num">4</div><div class="stat-label">Barbiers</div></div>
+      <div class="stat-item"><div class="stat-num">4.9★</div><div class="stat-label">Note</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Services & tarifs</div>
+      <div id="home-services"><div class="loading">Chargement...</div></div>
+    </div>
+  </div>
+
+  <div id="tab-rdv" class="page">
+    <div class="section"><div class="section-title"><i class="ti ti-calendar-plus"></i> Réserver un rendez-vous</div></div>
+    <div class="section" style="padding-top:0">
+      <div class="section-title" style="font-size:13px">Choisir un service</div>
+      <div id="rdv-services"><div class="loading">Chargement...</div></div>
+    </div>
+    <div class="rdv-summary" id="rdv-summary"></div>
+    <div class="rdv-form">
+      <div style="margin-bottom:.875rem">
+        <label class="form-label">Téléphone</label>
+        <input class="form-input" id="client-tel" type="tel" placeholder="06 xx xx xx xx" style="margin-bottom:0" />
+      </div>
+      <div style="margin-bottom:.875rem">
+        <label class="form-label">Barbier</label>
+        <select class="form-select" id="barber-sel" style="margin-bottom:0">
+          <option value="Khalid">Khalid (Patron)</option>
+          <option value="Youssef">Youssef</option>
+          <option value="Hamza">Hamza</option>
+          <option value="Amine">Amine</option>
+        </select>
+      </div>
+      <div style="margin-bottom:.875rem">
+        <label class="form-label">Date — Juin 2026</label>
+        <div class="days-grid" id="days-grid"></div>
+      </div>
+      <div style="margin-bottom:.875rem">
+        <label class="form-label">Créneau</label>
+        <div class="slots-grid" id="slots-grid"></div>
+      </div>
+      <button class="btn-full" id="rdv-btn" onclick="confirmRDV()"><i class="ti ti-check"></i> Confirmer le RDV</button>
+      <a id="whatsapp-confirm" class="whatsapp-btn" href="#" target="_blank" style="display:none">
+        <i class="ti ti-brand-whatsapp"></i> Confirmer aussi via WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <div id="tab-gallery" class="page">
+    <div class="section"><div class="section-title"><i class="ti ti-photo"></i> Galerie des styles</div></div>
+    <div class="gallery-filter">
+      <button class="filter-btn active" onclick="filterGallery('all',this)">Tous</button>
+      <button class="filter-btn" onclick="filterGallery('coupe',this)">Coupes</button>
+      <button class="filter-btn" onclick="filterGallery('barbe',this)">Barbes</button>
+      <button class="filter-btn" onclick="filterGallery('fade',this)">Fades</button>
+      <button class="filter-btn" onclick="filterGallery('soin',this)">Soins</button>
+    </div>
+    <div class="gallery-grid" id="gallery-grid"></div>
+  </div>
+
+  <div id="tab-admin" class="page">
+    <div class="section"><div class="section-title"><i class="ti ti-layout-dashboard"></i> Tableau de bord</div></div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="showAdminPanel('overview',this)">Vue globale</button>
+      <button class="admin-tab" onclick="showAdminPanel('revenus',this)">Revenus</button>
+      <button class="admin-tab" onclick="showAdminPanel('equipe',this)">Équipe</button>
+      <button class="admin-tab" onclick="showAdminPanel('notifs',this)">Notifications</button>
+    </div>
+    <div id="panel-overview" class="admin-panel active">
+      <div class="admin-grid">
+        <div class="admin-card"><div class="admin-card-title"><i class="ti ti-calendar"></i> RDV aujourd'hui</div><div class="metric-val" id="rdv-today-count">—</div></div>
+        <div class="admin-card"><div class="admin-card-title"><i class="ti ti-currency-dollar"></i> Recettes du jour</div><div class="metric-val" id="rev-today">— DH</div></div>
+        <div class="admin-card full"><div class="admin-card-title"><i class="ti ti-clock"></i> Prochains RDV</div><div id="rdv-list"><div class="loading">Chargement...</div></div></div>
+      </div>
+    </div>
+    <div id="panel-revenus" class="admin-panel">
+      <div class="admin-grid">
+        <div class="admin-card"><div class="admin-card-title">Cette semaine</div><div class="metric-val" id="rev-week">— DH</div></div>
+        <div class="admin-card"><div class="admin-card-title">Ce mois</div><div class="metric-val" id="rev-month">— DH</div></div>
+        <div class="admin-card full"><div class="admin-card-title"><i class="ti ti-chart-bar"></i> Par service</div><div id="service-rev"><div class="loading">Chargement...</div></div></div>
+      </div>
+    </div>
+    <div id="panel-equipe" class="admin-panel">
+      <div class="admin-grid">
+        <div class="admin-card full"><div class="admin-card-title"><i class="ti ti-users"></i> Équipe</div><div id="barbers-list"><div class="loading">Chargement...</div></div></div>
+      </div>
+    </div>
+    <div id="panel-notifs" class="admin-panel">
+      <div class="admin-grid">
+        <div class="admin-card full"><div class="admin-card-title"><i class="ti ti-bell"></i> Toutes les notifications</div><div id="admin-notif-full"><div class="loading">Chargement...</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-barber" class="page">
+    <div class="section"><div class="section-title"><i class="ti ti-calendar"></i> Mon planning — <span id="barber-name-display"></span></div></div>
+    <div class="barber-planning">
+      <div class="planning-card">
+        <div class="planning-title"><i class="ti ti-sun"></i> Aujourd'hui</div>
+        <div id="barber-rdv-today"><div class="loading">Chargement...</div></div>
+      </div>
+      <div class="planning-card">
+        <div class="planning-title"><i class="ti ti-calendar-week"></i> Stats semaine</div>
+        <div id="barber-week-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+const SUPABASE_URL='https://ptqlhljypdjfmrnpodfl.supabase.co';
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0cWxobGp5cGRqZm1ybnBvZGZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NzQ3NDYsImV4cCI6MjA5NjM1MDc0Nn0.GqFipGAoTouHTUzG6EuYPylA1irbkbJ98JziuNjTUDM';
+const SUPABASE_SVC='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0cWxobGp5cGRqZm1ybnBvZGZsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDc3NDc0NiwiZXhwIjoyMDk2MzUwNzQ2fQ.UEpbzMycwuTvIJD36b9aWMzCjV7Eyhkmd9zX1OC9gMc';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+const sbA=supabase.createClient(SUPABASE_URL,SUPABASE_SVC);
+const GALLERY=[
+  {cat:'coupe',title:'Coupe classique',tag:'Intemporel',url:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80'},
+  {cat:'fade',title:'Skin Fade',tag:'Tendance 2026',url:'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400&q=80'},
+  {cat:'barbe',title:'Barbe soignée',tag:'Style marocain',url:'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&q=80'},
+  {cat:'fade',title:'Drop Fade',tag:'Street style',url:'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&q=80'},
+  {cat:'coupe',title:'Undercut',tag:'Urban',url:'https://images.unsplash.com/photo-1580518337843-f959e992563b?w=400&q=80'},
+  {cat:'barbe',title:'Rasage net',tag:'Clean cut',url:'https://images.unsplash.com/photo-1612300977680-53bc571c8b36?w=400&q=80'},
+  {cat:'soin',title:'Soin Kératine',tag:'Premium',url:'https://images.unsplash.com/photo-1592647420148-bfcc177e2117?w=400&q=80'},
+  {cat:'fade',title:'Mid Fade',tag:'Populaire',url:'https://images.unsplash.com/photo-1511532872691-2db36fc5e8c9?w=400&q=80'},
+  {cat:'soin',title:'Soin Visage',tag:'Relaxant',url:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&q=80'},
+];
+const BC=[{name:'Khalid',bg:'#FCEBEB',tx:'#A32D2D'},{name:'Youssef',bg:'#EAF3DE',tx:'#27500A'},{name:'Hamza',bg:'#FAEEDA',tx:'#633806'},{name:'Amine',bg:'#E6F1FB',tx:'#0C447C'}];
+const CAT={incontournables:'Les Incontournables',petits:'Les Petits Plus',capillaires:'Soins Capillaires',visage:'Soins Visage'};
+const SLOTS=['09:00','09:30','10:00','10:30','11:00','11:30','12:00','14:00','14:30','15:00','15:30','16:00'];
+const DAYS=['D','L','M','M','J','V','S'];
+let role='client',user='',srv=null,day=null,slot=null,notifs=[],services=[];
+
+function setRole(r,el){role=r;document.querySelectorAll('.role-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');const pw=document.getElementById('pw-row'),l=document.getElementById('login-label'),i=document.getElementById('login-input');if(r==='client'){l.textContent='Votre prénom';i.placeholder='Votre prénom';pw.style.display='none';}else if(r==='barber'){l.textContent='Votre nom';i.placeholder='Khalid/Youssef/Hamza/Amine';pw.style.display='block';}else{l.textContent='Identifiant';i.placeholder='admin';pw.style.display='block';}}
+
+async function doLogin(){
+  const inp=document.getElementById('login-input').value.trim(),pw=document.getElementById('login-pw').value.trim(),err=document.getElementById('login-err'),btn=document.getElementById('login-btn');
+  err.classList.remove('show');if(!inp){err.textContent='Entrez votre nom.';err.classList.add('show');return;}
+  btn.disabled=true;btn.textContent='Connexion...';
+  if(role==='client'){user=inp;}
+  else if(role==='admin'){if(inp==='admin'&&pw==='admin123'){user='Admin';}else{err.textContent='Identifiants incorrects.';err.classList.add('show');btn.disabled=false;btn.innerHTML='Connexion <i class="ti ti-arrow-right"></i>';return;}}
+  else{const b=['Khalid','Youssef','Hamza','Amine'].find(x=>x.toLowerCase()===inp.toLowerCase());if(b&&pw==='1234'){user=b;}else{err.textContent='Barbier ou mot de passe incorrect.';err.classList.add('show');btn.disabled=false;btn.innerHTML='Connexion <i class="ti ti-arrow-right"></i>';return;}}
+  await launch();btn.disabled=false;btn.innerHTML='Connexion <i class="ti ti-arrow-right"></i>';
+}
+
+async function launch(){
+  document.getElementById('page-login').classList.remove('active');
+  document.getElementById('page-main').classList.add('active');
+  document.getElementById('nav-username').textContent=user;
+  buildNav();buildGallery('all');buildCal();
+  await loadSrv();await loadNotifs();await loadCount();
+  const def=role==='admin'?'admin':role==='barber'?'barber':'home';
+  showTab(def);
+  if(role==='admin')await loadAdmin();
+  if(role==='barber')await loadBarber();
+}
+
+async function loadSrv(){
+  const{data}=await sb.from('services').select('*').order('category');
+  services=data&&data.length?data:localSrv();
+  renderSrv('home-services',false);renderSrv('rdv-services',true);
+}
+
+function localSrv(){return[
+  {id:'1',category:'incontournables',icon:'✂️',name:'Coupe & Barbe',name_ar:'حلاقة الشعر واللحية',price:50},
+  {id:'2',category:'incontournables',icon:'💈',name:'Coupe Homme',name_ar:'قصة الشعر Standard',price:30},
+  {id:'3',category:'incontournables',icon:'💈',name:'Coupe Dégradée',name_ar:'قصة الشعر ديكرادي موس',price:40},
+  {id:'4',category:'incontournables',icon:'🪒',name:'Rasage Barbe',name_ar:'حلاقة الذقن',price:20},
+  {id:'5',category:'incontournables',icon:'✂️',name:'Contour de Barbe',name_ar:'تحديد اللحية',price:30},
+  {id:'6',category:'incontournables',icon:'👦',name:'Coupe Enfant',name_ar:'قصة شعر الأطفال',price:30},
+  {id:'7',category:'petits',icon:'💨',name:'Brushing',name_ar:'شوشوار',price:20},
+  {id:'8',category:'petits',icon:'🧴',name:'Shampoing',name_ar:'غسل الشعر',price:10},
+  {id:'9',category:'capillaires',icon:'🧪',name:'Soins Nourrissants',name_ar:'ترطيبة',price:80},
+  {id:'10',category:'capillaires',icon:'🎨',name:'Coloration Cheveux',name_ar:'صباغة الشعر',price:80},
+  {id:'11',category:'capillaires',icon:'🎨',name:'Coloration Barbe',name_ar:'صباغة اللحية',price:40},
+  {id:'12',category:'capillaires',icon:'💎',name:'Traitement Kératine',name_ar:'كيراتين',price:300},
+  {id:'13',category:'capillaires',icon:'💎',name:'Traitement Protéine',name_ar:'بروتين',price:300},
+  {id:'14',category:'visage',icon:'🧼',name:'Nettoyage du Visage',name_ar:'تنظيف البشرة',price:30},
+  {id:'15',category:'visage',icon:'♨️',name:'Soin Vapeur & Masque',name_ar:'تنظيف البشرة بخار + ماسك',price:60},
+  {id:'16',category:'visage',icon:'🕯️',name:'Épilation à la Cire',name_ar:'إزالة الشعر بالشمع',price:30},
+];}
+
+function renderSrv(cid,click){
+  const c=document.getElementById(cid);c.innerHTML='';
+  ['incontournables','petits','capillaires','visage'].forEach(cat=>{
+    const items=services.filter(s=>s.category===cat);if(!items.length)return;
+    const l=document.createElement('div');l.className='menu-cat-title';l.textContent=CAT[cat];c.appendChild(l);
+    items.forEach(s=>{
+      const r=document.createElement('div');r.className='service-row';
+      r.innerHTML=`<div class="srv-left"><span class="srv-icon">${s.icon||'✂️'}</span><div><div class="srv-name">${s.name}</div><div class="srv-sub">${s.name_ar||''}</div></div></div><div class="srv-price">${s.price} DH</div>`;
+      if(click)r.onclick=()=>selSrv(s,r);c.appendChild(r);
+    });
+  });
+}
+
+function selSrv(s,row){document.querySelectorAll('#rdv-services .service-row').forEach(r=>r.classList.remove('selected'));row.classList.add('selected');srv=s;const sm=document.getElementById('rdv-summary');sm.textContent=`Service : ${s.name} — ${s.price} DH`;sm.classList.add('show');}
+
+function buildCal(){
+  const g=document.getElementById('days-grid');g.innerHTML='';
+  for(let d=0;d<7;d++){const date=6+d;const b=document.createElement('div');b.className='day-btn'+(d===0?' disabled':'');b.innerHTML=`${DAYS[d]}<span class="day-num">${date}</span>`;if(d!==0)b.onclick=async()=>{document.querySelectorAll('.day-btn').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');day=date;await loadSlots();};g.appendChild(b);}
+}
+
+async function loadSlots(){
+  const barber=document.getElementById('barber-sel').value;
+  const date=`2026-06-${String(day).padStart(2,'0')}`;
+  const{data}=await sb.from('rdv').select('slot').eq('date',date).eq('barber_name',barber).eq('status','confirmed');
+  const taken=(data||[]).map(r=>r.slot);
+  const g=document.getElementById('slots-grid');g.innerHTML='';
+  SLOTS.forEach(s=>{const b=document.createElement('div');const tk=taken.includes(s);b.className='slot-btn'+(tk?' taken':'');b.textContent=s;if(!tk)b.onclick=()=>{document.querySelectorAll('.slot-btn:not(.taken)').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');slot=s;};g.appendChild(b);});
+}
+
+function buildSlots(){const g=document.getElementById('slots-grid');g.innerHTML='';SLOTS.forEach(s=>{const b=document.createElement('div');b.className='slot-btn';b.textContent=s;b.onclick=()=>{document.querySelectorAll('.slot-btn').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');slot=s;};g.appendChild(b);});}
+
+async function confirmRDV(){
+  if(!srv){showToast('Choisissez un service.');return;}if(!day||!slot){showToast('Choisissez date et créneau.');return;}
+  const barber=document.getElementById('barber-sel').value,tel=document.getElementById('client-tel').value.trim(),date=`2026-06-${String(day).padStart(2,'0')}`;
+  const btn=document.getElementById('rdv-btn');btn.disabled=true;btn.textContent='Confirmation...';
+  const{data,error}=await sbA.from('rdv').insert([{client_name:user,client_phone:tel,service_id:srv.id,barber_name:barber,date,slot,status:'confirmed'}]).select().single();
+  if(error){showToast('Erreur: '+error.message);btn.disabled=false;btn.innerHTML='<i class="ti ti-check"></i> Confirmer le RDV';return;}
+  await sbA.from('notifications').insert([
+    {title:`Nouveau RDV — ${barber}`,message:`${user} — ${slot} le ${date}`,type:'rdv',target_role:'admin',rdv_id:data.id},
+    {title:'Nouveau RDV',message:`${user} — ${slot} le ${date}`,type:'rdv',target_role:'barber',target_user:barber,rdv_id:data.id}
+  ]);
+  showToast(`RDV confirmé — ${srv.name} le ${day}/06 à ${slot} ✅`);
+  const msg=encodeURIComponent(`Bonjour KHALID Barber-Shop,\nRDV :\n- ${srv.name} (${srv.price} DH)\n- Barbier: ${barber}\n- ${day} juin 2026 à ${slot}\n- Nom: ${user}`);
+  const wa=document.getElementById('whatsapp-confirm');wa.href=`https://wa.me/212600000000?text=${msg}`;wa.style.display='flex';
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-check"></i> Confirmer le RDV';
+  await loadCount();await loadNotifs();
+}
+
+async function loadCount(){const{count}=await sb.from('rdv').select('*',{count:'exact',head:true}).eq('status','confirmed');document.getElementById('stat-rdv').textContent=count||0;}
+
+async function loadAdmin(){
+  const today=new Date().toISOString().split('T')[0];
+  const{data:rt}=await sbA.from('rdv').select('*,services(name,price)').eq('date',today).eq('status','confirmed').order('slot');
+  const cnt=rt?.length||0,rev=(rt||[]).reduce((s,r)=>s+(r.services?.price||0),0);
+  document.getElementById('rdv-today-count').textContent=cnt;document.getElementById('rev-today').textContent=rev+' DH';
+  document.getElementById('rdv-list').innerHTML=cnt?(rt||[]).map(r=>`<div class="rdv-item"><div><div class="rdv-client">${r.client_name}</div><div class="rdv-detail">${r.services?.name||''} · ${r.barber_name}</div></div><div class="rdv-time">${r.slot}</div></div>`).join(''):'<div style="padding:8px;font-size:12px;color:#888">Aucun RDV aujourd\'hui</div>';
+  const wk=new Date();wk.setDate(wk.getDate()-7);const mo=new Date();mo.setMonth(mo.getMonth()-1);
+  const{data:rw}=await sbA.from('rdv').select('services(price)').gte('date',wk.toISOString().split('T')[0]).eq('status','confirmed');
+  const{data:rm}=await sbA.from('rdv').select('services(name,price)').gte('date',mo.toISOString().split('T')[0]).eq('status','confirmed');
+  document.getElementById('rev-week').textContent=((rw||[]).reduce((s,r)=>s+(r.services?.price||0),0))+' DH';
+  document.getElementById('rev-month').textContent=((rm||[]).reduce((s,r)=>s+(r.services?.price||0),0))+' DH';
+  const sm={};(rm||[]).forEach(r=>{const n=r.services?.name||'Autre';sm[n]=(sm[n]||0)+(r.services?.price||0);});
+  const sa=Object.entries(sm).sort((a,b)=>b[1]-a[1]);const mx=sa[0]?.[1]||1;
+  document.getElementById('service-rev').innerHTML=sa.length?sa.map(([n,v])=>`<div class="rev-bar"><div class="rev-label"><span>${n}</span><span style="font-weight:600">${v} DH</span></div><div class="rev-track"><div class="rev-fill" style="width:${Math.round(v/mx*100)}%"></div></div></div>`).join(''):'<div style="padding:8px;font-size:12px;color:#888">Aucun revenu</div>';
+  const{data:us}=await sbA.from('users').select('*').in('role',['barber','admin']);
+  document.getElementById('barbers-list').innerHTML=(us||[]).map(u=>{const c=BC.find(b=>b.name===u.username)||{bg:'#eee',tx:'#333'};return`<div class="barber-item"><div class="avatar" style="background:${c.bg};color:${c.tx}">${u.username[0]}</div><div style="flex:1"><div style="font-size:13px;font-weight:600">${u.username}</div><div style="font-size:11px;color:#888">${u.role}</div></div><span style="font-size:11px;color:#888"><span class="status-dot" style="background:${u.is_active?'#639922':'#888'}"></span>${u.is_active?'Disponible':'Absent'}</span></div>`;}).join('');
+}
+
+async function loadBarber(){
+  document.getElementById('barber-name-display').textContent=user;
+  const today=new Date().toISOString().split('T')[0];
+  const{data:mr}=await sb.from('rdv').select('*,services(name)').eq('barber_name',user).eq('date',today).eq('status','confirmed').order('slot');
+  const el=document.getElementById('barber-rdv-today');
+  el.innerHTML=(mr||[]).length?(mr||[]).map(r=>`<div class="rdv-full-item"><span class="rdv-time-badge">${r.slot}</span><div style="flex:1"><div style="font-size:13px;font-weight:600">${r.client_name}</div><div style="font-size:11px;color:#888">${r.services?.name||''}</div></div></div>`).join(''):'<div style="padding:8px;font-size:13px;color:#888">Aucun RDV aujourd\'hui</div>';
+  const wk=new Date();wk.setDate(wk.getDate()-7);
+  const{count:wc}=await sb.from('rdv').select('*',{count:'exact',head:true}).eq('barber_name',user).gte('date',wk.toISOString().split('T')[0]).eq('status','confirmed');
+  const{count:cc}=await sb.from('rdv').select('*',{count:'exact',head:true}).eq('barber_name',user).gte('date',wk.toISOString().split('T')[0]).eq('status','cancelled');
+  const stats=[{l:"RDV aujourd'hui",v:(mr||[]).length},{l:'Cette semaine',v:wc||0},{l:'Annulations',v:cc||0},{l:'Note',v:'4.9★'}];
+  document.getElementById('barber-week-stats').innerHTML=stats.map(s=>`<div style="background:#f5f5f5;border-radius:10px;padding:.75rem"><div style="font-size:11px;color:#888">${s.l}</div><div style="font-size:20px;font-weight:700;margin-top:3px">${s.v}</div></div>`).join('');
+}
+
+async function loadNotifs(){
+  if(role==='client')return;
+  let q=sbA.from('notifications').select('*').order('created_at',{ascending:false}).limit(20);
+  if(role==='barber')q=q.or(`target_role.eq.barber,target_user.eq.${user}`);
+  const{data}=await q;notifs=data||[];updateBadge();renderNotifs();
+}
+
+function updateBadge(){const u=notifs.filter(n=>!n.read).length;const b=document.getElementById('notif-count');if(u>0){b.textContent=u>9?'9+':u;b.style.display='flex';}else b.style.display='none';}
+
+function renderNotifs(){
+  const el=document.getElementById('notif-list');
+  if(!notifs.length){el.innerHTML='<div style="padding:1rem;text-align:center;font-size:12px;color:#888">Aucune notification</div>';return;}
+  el.innerHTML=notifs.slice(0,8).map(n=>`<div class="notif-item ${n.read?'':'unread'}"><div class="notif-title">${n.title}</div><div class="notif-sub">${n.message}</div><div class="notif-time">${new Date(n.created_at).toLocaleString('fr-FR',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'})}</div></div>`).join('');
+  const a=document.getElementById('admin-notif-full');if(a)a.innerHTML=notifs.map(n=>`<div class="notif-item ${n.read?'':'unread'}" style="border-radius:8px;margin-bottom:6px"><div class="notif-title">${n.title}</div><div class="notif-sub">${n.message}</div><div class="notif-time">${new Date(n.created_at).toLocaleString('fr-FR')}</div></div>`).join('');
+}
+
+async function markAllRead(){await sbA.from('notifications').update({read:true}).eq('read',false);notifs.forEach(n=>n.read=true);updateBadge();renderNotifs();}
+function toggleNotifPanel(){document.getElementById('notif-panel').classList.toggle('open');}
+
+function buildGallery(f){
+  const g=document.getElementById('gallery-grid');g.innerHTML='';
+  GALLERY.filter(i=>f==='all'||i.cat===f).forEach(item=>{
+    const el=document.createElement('div');el.className='gallery-item';
+    const img=document.createElement('img');img.className='gallery-img';img.alt=item.title;img.src=item.url;
+    img.onerror=()=>{const ph=document.createElement('div');ph.className='gallery-img-ph';ph.textContent='💈';el.replaceChild(ph,img);};
+    const info=document.createElement('div');info.className='gallery-info';info.innerHTML=`<div class="gallery-title">${item.title}</div><div class="gallery-tag">${item.tag}</div>`;
+    el.appendChild(img);el.appendChild(info);g.appendChild(el);
+  });
+}
+function filterGallery(cat,btn){document.querySelectorAll('.gallery-filter .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');buildGallery(cat);}
+
+function buildNav(){
+  const nl=document.getElementById('nav-links');nl.innerHTML='';
+  const tabs=role==='admin'?[['home','ti-home','Accueil'],['gallery','ti-photo','Galerie'],['admin','ti-layout-dashboard','Dashboard']]:role==='barber'?[['barber','ti-calendar','Planning'],['gallery','ti-photo','Galerie']]:[['home','ti-home','Accueil'],['rdv','ti-calendar-plus','RDV'],['gallery','ti-photo','Galerie']];
+  tabs.forEach(([id,icon,label])=>{const b=document.createElement('button');b.className='nav-link';b.dataset.tab=id;b.innerHTML=`<i class="ti ${icon}"></i> ${label}`;b.onclick=()=>showTab(id);nl.appendChild(b);});
+}
+
+function showTab(id){
+  document.querySelectorAll('#page-main .page').forEach(p=>p.classList.remove('active'));
+  const t=document.getElementById('tab-'+id);if(t)t.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',l.dataset.tab===id));
+  if(id==='rdv'&&day)loadSlots();
+}
+
+function showAdminPanel(id,btn){
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');btn.classList.add('active');
+  if(id==='notifs')renderNotifs();
+}
+
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toast-text').textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',4000);}
+
+function doLogout(){
+  document.getElementById('notif-panel').classList.remove('open');
+  document.getElementById('page-main').classList.remove('active');
+  document.getElementById('page-login').classList.add('active');
+  document.getElementById('login-input').value='';document.getElementById('login-pw').value='';
+  role='client';user='';srv=null;day=null;slot=null;
+  document.querySelectorAll('.role-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  setRole('client',document.querySelectorAll('.role-tab')[0]);
+  document.getElementById('whatsapp-confirm').style.display='none';
+}
+
+document.addEventListener('click',e=>{const p=document.getElementById('notif-panel');const b=document.getElementById('notif-btn');if(p.classList.contains('open')&&!p.contains(e.target)&&!b.contains(e.target))p.classList.remove('open');});
+</script>
+</body>
+</html>
